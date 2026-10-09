@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAID — kody dla istniejących kont</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui;background:#10141b;color:#edf0f6}*{box-sizing:border-box}body{margin:0}main{max-width:900px;margin:auto;padding:40px 20px}h1{font-size:clamp(30px,6vw,48px);line-height:1.1}h2{font-size:22px}.tag{color:#e4bb72;letter-spacing:.15em;font-size:13px}p{line-height:1.6;color:#bec7d7}section{border:1px solid #303a49;background:#19212d;padding:22px;border-radius:16px;margin:22px 0}.links{display:flex;flex-wrap:wrap;gap:12px}a,button{display:inline-block;border:1px solid #536175;border-radius:9px;padding:12px 16px;background:#263448;color:#fff;text-decoration:none;font:inherit;cursor:pointer}.primary{background:#e4bb72;color:#17191e;border-color:#e4bb72;font-weight:650}a:hover,button:hover{filter:brightness(1.15)}input{width:100%;padding:12px;background:#10141b;color:white;border:1px solid #536175;border-radius:8px;font:inherit;margin:8px 0 16px}label{display:block}article{padding:16px 0;border-top:1px solid #384355;overflow-wrap:anywhere}article p{margin:8px 0}.used{opacity:.65}small{color:#bec7d7}footer{font-size:13px;color:#a9b4c7}#notice{min-height:24px}
+</style>
+<main>
+<div class="tag">RAID: SHADOW LEGENDS</div>
+<h1>Kody dla Twojego konta.</h1>
+<p>Ręczne wyszukiwanie kodów dla istniejących graczy. Otwórz wyniki, sprawdź warunki w źródle i zapisz wybrane kody poniżej.</p>
+<a id="search" class="primary" target="_blank" rel="noopener noreferrer">Szukaj aktualnych kodów ↗</a>
+<section><h2>Sprawdź źródła</h2><p>Na listach wybieraj „all players” lub „existing players”. Omiń sekcje „new players” i „starter codes”. Wynik wyszukiwania nie potwierdza ważności kodu.</p>
+<div class="links">
+<a href="https://hellhades.com/raid-shadow-legends-promo-codes/" target="_blank" rel="noopener noreferrer">HellHades ↗</a>
+<a href="https://www.reddit.com/r/RaidShadowLegends/search/?q=promo%20code&restrict_sr=1&sort=new" target="_blank" rel="noopener noreferrer">Reddit — najnowsze ↗</a>
+<a href="https://forum.plarium.com/en/raid-shadow-legends/" target="_blank" rel="noopener noreferrer">Forum Plarium ↗</a>
+<a href="https://redeem.raidshadowlegends.com/" target="_blank" rel="noopener noreferrer">Aktywuj kod ↗</a>
+</div></section>
+<section><h2>Moje znalezione kody</h2><p>Zapis wyłącznie w tej przeglądarce. Nie synchronizuje się między urządzeniami. Status „użyty” ustawiasz po udanej aktywacji.</p>
+<form id="form"><label for="code">Kod — zachowaj wielkość liter</label><input id="code" maxlength="100" required autocomplete="off" placeholder="Wklej znaleziony kod">
+<label for="source">Link do źródła</label><input id="source" type="url" maxlength="2000" required placeholder="https://…"><button class="primary">Zapisz kod</button></form>
+<p id="notice" role="status" aria-live="polite"></p><div id="list"></div>
+</section>
+<section><h2>Publikacja na GitHub Pages</h2><p>Wgraj ten plik jako <b>index.html</b> do osobnego publicznego repozytorium. W <b>Settings → Pages</b> wybierz <b>Deploy from a branch → main → /(root) → Save</b>. Strona nie potrzebuje klucza API, instalacji ani własnego workflow.</p></section>
+<footer>Niezależne narzędzie, bez powiązania z Plarium. Brak automatycznego pobierania kodów i sprawdzania ich ważności. <a href="https://raid-support.plarium.com/hc/en-us/articles/4411358827538-Promo-Codes-FAQ" target="_blank" rel="noopener noreferrer">Zasady kodów Plarium ↗</a></footer>
+</main>
+<script>
+'use strict';
+const key='raid-manual-codes-v1', notice=document.getElementById('notice');
+let codes=[];
+try { const saved=JSON.parse(localStorage.getItem(key)||'[]'); if(Array.isArray(saved)) codes=saved.filter(x=>x&&typeof x.code==='string'&&typeof x.source==='string'&&/^https?:\/\//i.test(x.source)&&typeof x.used==='boolean'); }
+catch {notice.textContent='Nie udało się odczytać zapisów. Możesz korzystać z wyszukiwania.';}
+const month=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+document.getElementById('search').href='https://www.google.com/search?q='+encodeURIComponent('RAID Shadow Legends promo codes existing players all players '+month);
+function persist(){try{localStorage.setItem(key,JSON.stringify(codes));notice.textContent='Zapisano w tej przeglądarce.';}catch{notice.textContent='Zapis trwały jest niedostępny. Lista działa tylko do zamknięcia strony.';}render();}
+function render(){
+ const list=document.getElementById('list');list.replaceChildren();
+ if(!codes.length){const p=document.createElement('p');p.textContent='Jeszcze nie masz zapisanych kodów.';list.append(p);}
+ codes.forEach((item,i)=>{
+  const row=document.createElement('article');if(item.used)row.className='used';
+  const title=document.createElement('strong');title.textContent=item.code;
+  const status=document.createElement('p');status.textContent=item.used?'Użyty — oznaczenie ręczne':'Do sprawdzenia w grze';
+  const actions=document.createElement('div');actions.className='links';
+  const link=document.createElement('a');link.textContent='Źródło ↗';link.href=item.source;link.target='_blank';link.rel='noopener noreferrer';
+  const copy=document.createElement('button');copy.type='button';copy.textContent='Kopiuj';copy.onclick=async()=>{try{await navigator.clipboard.writeText(item.code);notice.textContent='Skopiowano kod.';}catch{notice.textContent='Kopiowanie niedostępne. Zaznacz kod i skopiuj ręcznie.';}};
+  const toggle=document.createElement('button');toggle.type='button';toggle.textContent=item.used?'Cofnij oznaczenie':'Oznacz jako użyty';toggle.onclick=()=>{codes[i].used=!codes[i].used;persist();};
+  const remove=document.createElement('button');remove.type='button';remove.textContent='Usuń';remove.onclick=()=>{codes.splice(i,1);persist();};
+  actions.append(link,copy,toggle,remove);row.append(title,status,actions);list.append(row);
+ });
+}
+document.getElementById('form').onsubmit=e=>{
+ e.preventDefault();const code=document.getElementById('code').value.trim(),source=document.getElementById('source').value.trim();
+ if(!code)return;
+ let url;try{url=new URL(source);}catch{notice.textContent='Podaj poprawny link do źródła.';return;}
+ if(!['http:','https:'].includes(url.protocol)){notice.textContent='Źródło musi zaczynać się od https:// lub http://.';return;}
+ if(codes.some(x=>x.code===code)){notice.textContent='Ten kod jest już na liście.';return;}
+ codes.unshift({code,source:url.href,used:false});persist();e.target.reset();
+};render();
+</script>
+</html>
